@@ -13,8 +13,23 @@ function randomString() {
 }
 
 
-readDirPromise('./notes')
-  .then(data => data.forEach(file => {
-    statPromises(`./notes/${file}`)
-      .then(stats => renamePromises(`./notes/${file}`, `./notes/note-${randomString()}-${stats.size}-${stats.birthtime}`))
-  }))
+// readDirPromise('./notes')
+//   .then(data => data.forEach(file => {
+//     statPromises(`./notes/${file}`)
+//       .then(stats => renamePromises(`./notes/${file}`, `./notes/note-${randomString()}-${stats.size}-${stats.birthtime}`))
+//   }))
+
+
+async function renameFiles() {
+  try {
+    const fileNames = await readDirPromise('./notes');
+    for (let i = 0; i < fileNames.length; i++) {
+      let stats = await statPromises(`./notes/${fileNames[i]}`);
+      renamePromises(`./notes/${fileNames[i]}`, `./notes/note-${randomString()}-${stats.size}-${stats.birthtime}`)
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+renameFiles();
